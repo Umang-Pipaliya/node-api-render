@@ -5,6 +5,7 @@ const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const dotenv = require('dotenv');
 const db = require('./db');
+const helmet = require('helmet');
 
 require('dotenv').config({ path: './test.env' });
 
@@ -19,6 +20,7 @@ const galleryRouter = require('./gallery');
 app.use(cors({ origin: FRONTEND_ORIGIN }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(helmet());
 
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
@@ -30,6 +32,11 @@ app.use('/api/gallery', galleryRouter);
 
 app.get('/', (req, res) => {
   res.send('Vikrmdeep Impex API running');
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Internal Server Error' });
 });
 
 async function ensureAdmin() {
