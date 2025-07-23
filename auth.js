@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const db = require('./db');
 const rateLimit = require('express-rate-limit');
+const logger = require('./logger');
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
@@ -43,7 +44,7 @@ router.post('/login', loginLimiter, async (req, res) => {
     const token = jwt.sign({ id: admin.id, username: admin.username }, JWT_SECRET, { expiresIn: '2h' });
     res.json({ token });
   } catch (err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).json({ message: 'DB error' });
   }
 });

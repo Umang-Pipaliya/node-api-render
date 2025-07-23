@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('./db');
 const rateLimit = require('express-rate-limit');
 const xss = require('xss');
+const logger = require('./logger');
 
 const router = express.Router();
 
@@ -53,7 +54,7 @@ router.post('/', contactLimiter, async (req, res) => {
     await db.query('INSERT INTO contact (name, email, message) VALUES ($1, $2, $3)', [name, email, message]);
     res.json({ message: 'Submitted successfully' });
   } catch (err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).json({ message: 'DB error' });
   }
 });

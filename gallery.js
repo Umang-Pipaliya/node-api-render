@@ -5,6 +5,7 @@ const fs = require('fs');
 const db = require('./db');
 const { authenticateToken } = require('./auth');
 const xss = require('xss');
+const logger = require('./logger');
 
 const router = express.Router();
 
@@ -40,7 +41,7 @@ router.get('/', async (req, res) => {
     }));
     res.json(rows);
   } catch (err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).json({ message: 'DB error' });
   }
 });
@@ -61,7 +62,7 @@ router.post('/upload', authenticateToken, upload.single('image'), async (req, re
     );
     res.json({ id: result.rows[0].id, url: `/uploads/${req.file.filename}`, alt_text });
   } catch (err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).json({ message: 'DB error' });
   }
 });
@@ -79,7 +80,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     await db.query('DELETE FROM gallery WHERE id = $1', [id]);
     res.json({ message: 'Image deleted' });
   } catch (err) {
-    console.error(err);
+    logger.error(err);
     res.status(500).json({ message: 'DB error' });
   }
 });

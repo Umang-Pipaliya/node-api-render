@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const dotenv = require('dotenv');
 const db = require('./db');
 const helmet = require('helmet');
+const logger = require('./logger');
 
 require('dotenv').config({ path: './test.env' });
 
@@ -37,7 +38,7 @@ app.get('/', (req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  logger.error(err.stack);
   res.status(500).json({ message: 'Internal Server Error' });
 });
 
@@ -46,7 +47,7 @@ async function ensureAdmin() {
   const password = process.env.ADMIN_PASS;
 
   if (!username || !password) {
-    console.warn('ADMIN_USER or ADMIN_PASS not set in .env');
+    logger.warn('ADMIN_USER or ADMIN_PASS not set in .env');
     return;
   }
 
@@ -55,16 +56,18 @@ async function ensureAdmin() {
     if (result.rowCount === 0) {
       const hash = await bcrypt.hash(password, 10);
       await db.query('INSERT INTO admin (username, password) VALUES ($1, $2)', [username, hash]);
-      console.log('✅ Default admin created');
+      logger.info('✅ Default admin created');
     } else {
-      console.log('✅ Admin already exists');
+      logger.info('✅ Admin already exists');
     }
   } catch (err) {
-    console.error('❌ Error ensuring admin:', err);
+    logger.error('❌ Error ensuring admin:', err);
   }
 }
 
 app.listen(PORT, async () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  logger.info(`🚀 Server running on http://localhost:${PORT}`);
   await ensureAdmin();
 });
+
+module.exports = app;
