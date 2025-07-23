@@ -16,6 +16,7 @@ const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || '*';
 const { router: authRouter } = require('./auth');
 const contactRouter = require('./contact');
 const galleryRouter = require('./gallery');
+const aboutRouter = require('./about');
 
 app.use(cors({ origin: FRONTEND_ORIGIN }));
 app.use(express.json());
@@ -29,6 +30,7 @@ app.use('/uploads', express.static(uploadsDir));
 app.use('/api/auth', authRouter);
 app.use('/api/contact', contactRouter);
 app.use('/api/gallery', galleryRouter);
+app.use('/api/about', aboutRouter);
 
 app.get('/', (req, res) => {
   res.send('Vikrmdeep Impex API running');

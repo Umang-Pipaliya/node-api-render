@@ -25,6 +25,16 @@ const db = require('./db');
       uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`);
 
+    await db.query(`
+  CREATE TABLE IF NOT EXISTS team (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    role TEXT NOT NULL,
+    photo TEXT, -- store filename or URL
+    bio TEXT
+  )
+`);
+
     console.log('✅ Tables created successfully');
     process.exit(0);
   } catch (err) {
